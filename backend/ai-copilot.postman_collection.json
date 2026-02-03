@@ -1,0 +1,404 @@
+{
+  "info": {
+    "name": "AI Copilot Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for ai-copilot backend routes (FastAPI). Includes JWT auth + interview copilot + analytics + profile analyzer."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000" },
+    { "key": "token", "value": "" },
+    { "key": "email", "value": "naman@gmail.com" },
+    { "key": "password", "value": "ChangeMe@123" },
+    { "key": "sessionId", "value": "1" },
+    { "key": "qaItemId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST /auth/signup",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "signup"]
+            }
+          }
+        },
+        {
+          "name": "POST /auth/login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "  const json = pm.response.json();",
+                  "  const token = json.access_token || json.token || json.jwt;",
+                  "  if (token) pm.collectionVariables.set('token', String(token));",
+                  "} catch (e) {}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "POST /session (Create Session)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mode\": \"interview\",\n  \"track\": \"backend\",\n  \"level\": \"intermediate\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/session",
+              "host": ["{{baseUrl}}"],
+              "path": ["session"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "  const json = pm.response.json();",
+                  "  if (json.session_id) pm.collectionVariables.set('sessionId', String(json.session_id));",
+                  "} catch (e) {}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /session/{session_id} (Get Session)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/session/{{sessionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["session", "{{sessionId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Interview Copilot",
+      "item": [
+        {
+          "name": "POST /question (Generate Question)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": {{sessionId}},\n  \"skill\": \"SystemDesign\",\n  \"topic\": \"Caching\",\n  \"question_type\": \"scenario\",\n  \"difficulty\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/question",
+              "host": ["{{baseUrl}}"],
+              "path": ["question"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "  const json = pm.response.json();",
+                  "  if (json.qa_item_id) pm.collectionVariables.set('qaItemId', String(json.qa_item_id));",
+                  "} catch (e) {}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /hint (Get Hint)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"qa_item_id\": {{qaItemId}},\n  \"hint_level\": \"small\",\n  \"user_answer\": \"I will use Redis as cache, set TTL, and use cache-aside strategy.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/hint",
+              "host": ["{{baseUrl}}"],
+              "path": ["hint"]
+            }
+          }
+        },
+        {
+          "name": "POST /evaluate (Evaluate Answer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"qa_item_id\": {{qaItemId}},\n  \"user_answer\": \"I would use a cache-aside strategy with Redis, TTLs, and invalidation rules. For consistency, I'd consider write-through or event-based invalidation. I'd add monitoring and handle cache stampede with locks.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/evaluate",
+              "host": ["{{baseUrl}}"],
+              "path": ["evaluate"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "GET /weak-topics/{session_id} (Weak Topics)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/weak-topics/{{sessionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["weak-topics", "{{sessionId}}"]
+            }
+          }
+        },
+        {
+          "name": "GET /dashboard/{session_id} (Dashboard)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/{{sessionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "{{sessionId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profile Analyzer",
+      "item": [
+        {
+          "name": "POST /profile/analyze (with resume_text)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "jd_text",
+                  "type": "text",
+                  "value": "We are hiring a Frontend Developer with strong React, Next.js, TypeScript, performance optimization, and testing experience. Must know hooks, state management, SSR/SSG, and REST APIs."
+                },
+                {
+                  "key": "resume_text",
+                  "type": "text",
+                  "value": "Frontend engineer with 2+ years experience building React apps. Worked with Next.js (SSR), TypeScript, Redux Toolkit, REST APIs. Improved performance using memoization and lazy loading. Wrote unit tests in Jest."
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/profile/analyze",
+              "host": ["{{baseUrl}}"],
+              "path": ["profile", "analyze"]
+            }
+          }
+        },
+        {
+          "name": "POST /profile/analyze (with resume_pdf)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "jd_text",
+                  "type": "text",
+                  "value": "We are hiring a Backend Developer with strong SQL, system design, REST APIs, and microservices. Experience with caching, queues, and scaling required."
+                },
+                {
+                  "key": "resume_pdf",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/profile/analyze",
+              "host": ["{{baseUrl}}"],
+              "path": ["profile", "analyze"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mock Interview",
+      "item": [
+        {
+          "name": "POST /interview/start (Start Interview)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"track\": \"backend\",\n  \"level\": \"intermediate\",\n  \"interview_type\": \"Technical\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interview/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["interview", "start"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "  const json = pm.response.json();",
+                  "  if (json.session_id) pm.collectionVariables.set('interviewSessionId', String(json.session_id));",
+                  "  if (json.qa_item_id) pm.collectionVariables.set('interviewQaItemId', String(json.qa_item_id));",
+                  "} catch (e) {}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /interview/answer (Submit Answer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"qa_item_id\": {{interviewQaItemId}},\n  \"user_answer\": \"I would approach this by first understanding the requirements, then designing a solution that handles edge cases. For example, I would use caching to improve performance and implement proper error handling.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interview/answer",
+              "host": ["{{baseUrl}}"],
+              "path": ["interview", "answer"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "  const json = pm.response.json();",
+                  "  if (json.follow_up_qa_item_id) pm.collectionVariables.set('interviewQaItemId', String(json.follow_up_qa_item_id));",
+                  "} catch (e) {}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /interview/next (Next Question)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": {{interviewSessionId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/interview/next",
+              "host": ["{{baseUrl}}"],
+              "path": ["interview", "next"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "  const json = pm.response.json();",
+                  "  if (json.qa_item_id) pm.collectionVariables.set('interviewQaItemId', String(json.qa_item_id));",
+                  "} catch (e) {}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
