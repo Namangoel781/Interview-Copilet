@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { getAuthToken, api, type ProfileMeOut } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, BrainCircuit, UserCircle, LogOut, CheckCircle, Settings } from "lucide-react";
+import { LayoutDashboard, BrainCircuit, UserCircle, LogOut, CheckCircle, Settings, Terminal } from "lucide-react";
 
 export function Navbar() {
     const pathname = usePathname();
@@ -32,6 +32,7 @@ export function Navbar() {
     const navItems = [
         { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
         { name: "Practice", href: "/copilot", icon: BrainCircuit },
+        { name: "Simulator", href: "/simulator", icon: Terminal },
         { name: "Quiz", href: "/mcq", icon: CheckCircle },
         { name: "Analyzer", href: "/profile", icon: UserCircle },
     ];

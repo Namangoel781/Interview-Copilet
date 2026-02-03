@@ -20,6 +20,7 @@ from routers.mcq import router as mcq_router
 from routers.dashboard import router as dashboard_router
 from routers.interview import router as interview_router
 from routers.roadmap import router as roadmap_router
+from routers.simulator import router as simulator_router
 
 
 # --- DB migration helper for User columns ---
@@ -104,6 +105,7 @@ app.include_router(mcq_router)
 app.include_router(dashboard_router)
 app.include_router(interview_router)
 app.include_router(roadmap_router)
+app.include_router(simulator_router)
 
 
 # Health check endpoint

@@ -197,3 +197,36 @@ def normalize_question_for_hash(q: str) -> str:
 def sha256_hex(s: str) -> str:
     """Compute SHA256 hash of a string."""
     return hashlib.sha256(s.encode("utf-8")).hexdigest()
+
+def generate_problem_prompt(topic: str, difficulty: str) -> str:
+    """Generate a prompt for creating a coding problem."""
+    return f"""
+You are an expert technical interviewer.
+Task: Generate a unique coding problem based on the topic: "{topic}" and difficulty: "{difficulty}".
+
+Return VALID JSON ONLY with this exact structure:
+{{
+    "id": "slug-style-id",
+    "title": "Problem Title",
+    "difficulty": "{difficulty}",
+    "description": "Markdown description of the problem...",
+    "examples": [
+        {{ "input": {{ "arg1": val1 }}, "output": result, "explanation": "optional text" }}
+    ],
+    "constraints": ["constraint 1", "constraint 2"],
+    "initial_code": "Python code block starting with import typing... class Solution:\\n    def method(...):\\n        pass",
+    "test_cases": [
+        {{ "input": {{ "arg1": val1 }}, "output": result }}
+    ],
+    "solution": "Full python solution code",
+    "hints": ["hint 1", "hint 2"]
+}}
+
+Rules:
+1. `initial_code` should define a class `Solution` and a method.
+2. `test_cases` must cover edge cases and match the `initial_code` signature.
+3. `id` should be a kebab-case string of the title.
+4. `description` can use markdown.
+5. Provide at least 3 `examples` and 5 `test_cases`.
+6. `initial_code` must import necessary types from `typing` (e.g. List, Optional).
+""".strip()
