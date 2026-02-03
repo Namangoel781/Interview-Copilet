@@ -152,6 +152,12 @@ Return JSON with exactly these keys (no extra keys):
 12) project_suggestions: {{title: string, stack: string[], why: string, scope_days: number}}[]
 13) ats_keywords_to_add: string[]
 14) summary: string
+15) ats_score: number (0-100 score based on ATS readability, formatting, and keyword optimization)
+16) ats_warnings: string[] (list of specific formatting or keyword issues that might hurt ATS parsing)
+17) star_rewrites: {{original: string, rewritten: string, reasoning: string}}[]
+    - Identify 3 weakest bullet points in the resume that lack impact.
+    - Rewrite them using the STAR method (Situation, Task, Action, Result).
+    - Provide reasoning for why the rewrite is better.
 
 JOB DESCRIPTION:
 {jd_text.strip()}

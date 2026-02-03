@@ -284,9 +284,19 @@ class ProfileAnalyzeIn(BaseModel):
     level: Optional[Level] = None
 
 
+class StarRewrite(BaseModel):
+    original: str
+    rewritten: str
+    reasoning: str
+
 class ProfileAnalyzeOut(BaseModel):
     summary: str
     role_fit_score: int = Field(ge=0, le=100)
+    
+    # New ATS & STAR features
+    ats_score: int = Field(default=0, ge=0, le=100)
+    ats_warnings: list[str] = Field(default_factory=list)
+    star_rewrites: list[StarRewrite] = Field(default_factory=list)
 
     required_skills: list[SkillRequirement]
     experience_expectations: list[str]
@@ -297,68 +307,9 @@ class ProfileAnalyzeOut(BaseModel):
 
 
 # -----------------------------
-# 3) AI MCQ Assessment
+# 3) AI MCQ Assessment (Legacy / unused placeholders removed)
 # -----------------------------
 
-class MCQQuestion(BaseModel):
-    id: str
-    skill: str
-    topic: str
-    difficulty: int = Field(ge=1, le=5)
-    question: str
-    options: list[str] = Field(min_length=4, max_length=6)
-    correct_index: int = Field(ge=0, le=5)
-    explanation: str
-
-
-class MCQGenerateIn(BaseModel):
-    session_id: int
-    skill: SkillName
-    topic: str
-    count: int = Field(default=5, ge=1, le=20)
-    difficulty: Difficulty = Field(default="medium")
-
-    @field_validator("skill")
-    @classmethod
-    def _norm_skill(cls, v: str) -> str:
-        v2 = normalize_skill_name(v)
-        if not v2:
-            raise ValueError("skill is required")
-        return v2
-
-    @field_validator("difficulty")
-    @classmethod
-    def _norm_diff(cls, v: Any) -> int:
-        return normalize_difficulty(v)
-
-
-class MCQGenerateOut(BaseModel):
-    items: list[MCQQuestion]
-
-
-class MCQSubmitAnswer(BaseModel):
-    mcq_id: str
-    selected_index: int
-
-
-class MCQSubmitIn(BaseModel):
-    session_id: int
-    answers: list[MCQSubmitAnswer] = Field(min_length=1)
-
-
-class MCQItemResult(BaseModel):
-    mcq_id: str
-    is_correct: bool
-    correct_index: int
-    explanation: str
-
-
-class MCQSubmitOut(BaseModel):
-    total: int
-    correct: int
-    score_percent: float = Field(ge=0, le=100)
-    by_skill: dict[str, float] = {}
-    results: list[MCQItemResult]
 
 
 # -----------------------------
@@ -398,7 +349,7 @@ class MCQGenerateIn(BaseModel):
     session_id: int
     skill: str
     topic: str
-    difficulty: int = Field(ge=1, le=3)
+    difficulty: int = Field(default=3, ge=1, le=3)
     n: int = Field(default=5, ge=1, le=20)
 
 

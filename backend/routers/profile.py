@@ -41,12 +41,23 @@ class ProfileMeOut(BaseModel):
     level: str | None = None
 
 
+class StarRewrite(BaseModel):
+    original: str
+    rewritten: str
+    reasoning: str
+
+
 class ProfileAnalyzeOut(BaseModel):
     # Richer, JD-grounded extraction
     required_skills: list[dict[str, Any]] = Field(default_factory=list)
     experience_expectations: list[str] = Field(default_factory=list)
     gap_report: dict[str, Any] = Field(default_factory=dict)
     role_fit_score: int = 0
+
+    # New ATS & STAR features
+    ats_score: int = Field(default=0, ge=0, le=100)
+    ats_warnings: list[str] = Field(default_factory=list)
+    star_rewrites: list[StarRewrite] = Field(default_factory=list)
 
     # Existing fields (kept for backward compatibility)
     matched_skills: list[str] = Field(default_factory=list)
@@ -194,6 +205,12 @@ def profile_analyze(
         if result.role_fit_score > 100:
             result.role_fit_score = 100
 
+        # Normalize new ATS/STAR fields
+        if result.ats_score < 0: result.ats_score = 0
+        if result.ats_score > 100: result.ats_score = 100
+        if not result.ats_warnings: result.ats_warnings = []
+        if not result.star_rewrites: result.star_rewrites = []
+
         # Build YouTube search links for topics
         topics: list[str] = []
 
@@ -272,6 +289,9 @@ def profile_analyze(
                         "experience_expectations": result.experience_expectations,
                         "gap_report": result.gap_report,
                         "role_fit_score": result.role_fit_score,
+                        "ats_score": result.ats_score,
+                        "ats_warnings": result.ats_warnings,
+                        "star_rewrites": [r.model_dump() for r in result.star_rewrites],
                     }
                 ),
                 ai_meta_json=json.dumps(

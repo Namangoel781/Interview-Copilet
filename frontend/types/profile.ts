@@ -30,8 +30,14 @@ export type RequiredSkill = {
 export type GapReport = {
   missing: string[];
   weak: string[];
-  suggested_projects: string[];
+  suggested_projects: any[];
   ats_keywords: string[];
+};
+
+export type StarRewrite = {
+  original: string;
+  rewritten: string;
+  reasoning: string;
 };
 
 export interface ProfileAnalyzeOut {
@@ -50,4 +56,8 @@ export interface ProfileAnalyzeOut {
   resume_improvements: string[];
   ats_keywords_to_add: string[];
   project_suggestions?: { title: string; why: string; stack: string[]; scope_days: number }[];
+  // New ATS & STAR features
+  ats_score?: number;
+  ats_warnings?: string[];
+  star_rewrites?: StarRewrite[];
 }

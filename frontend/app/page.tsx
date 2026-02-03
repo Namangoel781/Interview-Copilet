@@ -71,187 +71,90 @@ export default function Home() {
 
         <div className="mx-auto max-w-6xl px-6 py-8 sm:py-10">
           {/* Top nav */}
-          <header className="sticky top-0 z-20 -mx-6 mb-10 border-b bg-background/70 px-6 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/50">
-            <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-2xl bg-primary/10 ring-1 ring-primary/15">
-                  <div className="h-5 w-5 rounded-md bg-primary/30" />
-                </div>
-                <div className="leading-tight">
-                  <div className="text-sm font-semibold tracking-tight">AI Learning Copilot</div>
-                  <div className="text-xs text-muted-foreground">Practice • Feedback • Progress</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 sm:gap-3">
-                {/* Profile chip (desktop) */}
-                <div className="hidden items-center gap-3 rounded-2xl border bg-background/60 px-3 py-2 shadow-sm md:flex">
-                  <div className="flex flex-col leading-tight">
-                    <div className="text-[11px] text-muted-foreground">Signed in</div>
-
-                    {meState === "loading" && (
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 animate-pulse rounded-full bg-primary/60" />
-                        <span className="text-sm font-medium">Loading profile…</span>
-                      </div>
-                    )}
-
-                    {meState === "error" && (
-                      <span className="text-sm font-medium">Couldn’t load profile</span>
-                    )}
-
-                    {meState === "ready" && (
-                      <div className="space-y-1">
-                        <div className="text-sm font-medium">{me?.email ?? "User"}</div>
-                        <div className="flex flex-wrap gap-1">
-                          {me?.domain ? <Badge variant="secondary">{me.domain}</Badge> : null}
-                          {me?.role ? <Badge variant="outline">{me.role}</Badge> : null}
-                          {me?.track ? <Badge variant="outline">{me.track}</Badge> : null}
-                          {me?.level ? <Badge variant="outline">{me.level}</Badge> : null}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <Button size="sm" variant="secondary" asChild>
-                    <Link href="/profile/setup">Edit</Link>
-                  </Button>
-                </div>
-
-                {/* Nav */}
-                <div className="flex items-center gap-1">
-                  <Button variant="ghost" asChild>
-                    <Link href="/dashboard">Dashboard</Link>
-                  </Button>
-                  <Button variant="ghost" asChild>
-                    <Link href="/profile">Analyzer</Link>
-                  </Button>
-                  <Button asChild>
-                    <Link href="/copilot">Open Copilot</Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </header>
-
           {/* Hero */}
-          <section className="grid gap-8 lg:grid-cols-2 lg:items-center">
+          <section className="grid gap-8 lg:grid-cols-2 lg:items-center py-12 md:py-24">
             <div className="space-y-6">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="secondary">Software Developer</Badge>
-                <Badge variant="outline">Backend • Frontend • Fullstack</Badge>
-                <Badge variant="outline">Role-focused practice</Badge>
+                <Badge variant="secondary" className="px-3 py-1">Software Developer Preparation</Badge>
+                <Badge variant="outline" className="px-3 py-1">Fullstack • Backend • Frontend</Badge>
               </div>
 
-              <div className="space-y-3">
-                <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-                  Learn faster. Practice smarter.{" "}
+              <div className="space-y-4">
+                <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl">
+                  Master your next <br className="hidden lg:block" />
                   <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                    Crack interviews.
+                    Technical Interview.
                   </span>
                 </h1>
-                <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-                  Generate interview questions, write answers, get rubric-based feedback, track weak topics,
-                  and use the JD + Resume Analyzer to build a focused learning plan for your target role.
+                <p className="max-w-xl text-lg text-muted-foreground leading-relaxed">
+                  Generate realistic questions, practice with AI feedback, and identify your weak spots.
+                  Get a personalized roadmap based on your target job description.
                 </p>
               </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button size="lg" asChild>
-                  <Link href="/copilot">Start practicing</Link>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center pt-2">
+                <Button size="lg" className="h-12 px-8 text-base shadow-lg shadow-primary/20" asChild>
+                  <Link href="/copilot">Start Practicing</Link>
                 </Button>
-                <Button size="lg" variant="secondary" asChild>
-                  <Link href="/profile">Analyze JD + Resume</Link>
+                <Button size="lg" variant="outline" className="h-12 px-8 text-base border-primary/20 hover:bg-primary/5" asChild>
+                  <Link href="/profile">Analyze Job Description</Link>
                 </Button>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border bg-background/60 p-4 shadow-sm">
-                  <div className="text-sm font-semibold">Rubric feedback</div>
-                  <div className="text-sm text-muted-foreground">Accuracy • Depth • Clarity</div>
+              <div className="grid gap-4 sm:grid-cols-3 pt-6">
+                <div className="flex flex-col gap-1 rounded-xl border bg-card p-4 shadow-sm">
+                  <div className="font-semibold text-foreground">AI Feedback</div>
+                  <div className="text-xs text-muted-foreground">Instant rubric grading & hints</div>
                 </div>
-                <div className="rounded-2xl border bg-background/60 p-4 shadow-sm">
-                  <div className="text-sm font-semibold">Weak topics</div>
-                  <div className="text-sm text-muted-foreground">Always know what’s next</div>
+                <div className="flex flex-col gap-1 rounded-xl border bg-card p-4 shadow-sm">
+                  <div className="font-semibold text-foreground">Progress Tracking</div>
+                  <div className="text-xs text-muted-foreground">Visualize weak topics over time</div>
                 </div>
-                <div className="rounded-2xl border bg-background/60 p-4 shadow-sm">
-                  <div className="text-sm font-semibold">Roadmap</div>
-                  <div className="text-sm text-muted-foreground">Targeted 2‑week plan</div>
+                <div className="flex flex-col gap-1 rounded-xl border bg-card p-4 shadow-sm">
+                  <div className="font-semibold text-foreground">Custom Roadmap</div>
+                  <div className="text-xs text-muted-foreground">Tailored 2-week study plan</div>
                 </div>
-              </div>
-
-              {/* Mobile profile chip */}
-              <div className="md:hidden">
-                <Card className="border-primary/15 bg-background/60">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Your profile</CardTitle>
-                    <CardDescription>Keep your setup aligned with your target role.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {meState === "loading" && (
-                      <div className="text-sm text-muted-foreground">Loading profile…</div>
-                    )}
-                    {meState === "no-token" && (
-                      <div className="text-sm text-muted-foreground">Not signed in</div>
-                    )}
-                    {meState === "error" && (
-                      <div className="text-sm text-muted-foreground">Couldn’t load profile</div>
-                    )}
-                    {meState === "ready" && (
-                      <div className="space-y-2">
-                        <div className="text-sm font-medium">{me?.email ?? "User"}</div>
-                        <div className="flex flex-wrap gap-1">
-                          {me?.domain ? <Badge variant="secondary">{me.domain}</Badge> : null}
-                          {me?.role ? <Badge variant="outline">{me.role}</Badge> : null}
-                          {me?.track ? <Badge variant="outline">{me.track}</Badge> : null}
-                          {me?.level ? <Badge variant="outline">{me.level}</Badge> : null}
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                  <CardFooter>
-                    <Button variant="secondary" className="w-full" asChild>
-                      <Link href="/profile/setup">Edit profile</Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
               </div>
             </div>
 
-            <Card className="border-primary/15 bg-background/60 shadow-sm">
-              <CardHeader>
-                <CardTitle>Quick Start</CardTitle>
-                <CardDescription>Be productive in under 2 minutes.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="rounded-2xl border bg-background p-4">
-                  <div className="text-sm font-medium">1) Practice questions</div>
-                  <div className="mt-1 text-sm text-muted-foreground">
-                    Open <span className="font-mono">Copilot</span> → choose track/skill → generate → answer → evaluate.
+            {/* Quick Start Card (Right Side) */}
+            <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary/30 to-secondary/30 opacity-50 blur-2xl" />
+              <Card className="relative border-primary/10 bg-background/80 backdrop-blur-sm shadow-xl">
+                <CardHeader>
+                  <CardTitle>Quick Start Guide</CardTitle>
+                  <CardDescription>Be productive in under 2 minutes.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex gap-4">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">1</div>
+                    <div>
+                      <div className="font-medium">Practice Questions</div>
+                      <div className="text-sm text-muted-foreground">Choose a track & difficulty. Get instant feedback.</div>
+                    </div>
                   </div>
-                </div>
-                <div className="rounded-2xl border bg-background p-4">
-                  <div className="text-sm font-medium">2) Analyze a job</div>
-                  <div className="mt-1 text-sm text-muted-foreground">
-                    Open <span className="font-mono">Analyzer</span> → paste JD → upload resume → get topics + plan + keywords.
+                  <div className="flex gap-4">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">2</div>
+                    <div>
+                      <div className="font-medium">Analyze JD + Resume</div>
+                      <div className="text-sm text-muted-foreground">Upload your target JD to get a tailored plan.</div>
+                    </div>
                   </div>
-                </div>
-                <div className="rounded-2xl border bg-background p-4">
-                  <div className="text-sm font-medium">3) Track progress</div>
-                  <div className="mt-1 text-sm text-muted-foreground">
-                    Use <span className="font-mono">Dashboard</span> to review history + weak topics.
+                  <div className="flex gap-4">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">3</div>
+                    <div>
+                      <div className="font-medium">Track Progress</div>
+                      <div className="text-sm text-muted-foreground">Focus on what matters most.</div>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-              <CardFooter className="flex flex-col gap-2 sm:flex-row sm:justify-between">
-                <Button variant="secondary" asChild className="w-full sm:w-auto">
-                  <Link href="/dashboard">Open Dashboard</Link>
-                </Button>
-                <Button asChild className="w-full sm:w-auto">
-                  <Link href="/copilot">Open Copilot</Link>
-                </Button>
-              </CardFooter>
-            </Card>
+                </CardContent>
+                <CardFooter className="bg-muted/30 p-4">
+                  <Button variant="ghost" className="w-full justify-between" asChild>
+                    <Link href="/dashboard">Go to Dashboard <span className="ml-2">→</span></Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
           </section>
 
           <Separator className="my-12" />
