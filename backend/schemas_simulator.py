@@ -22,3 +22,14 @@ class GenerateProblemOut(BaseModel):
     test_cases: List[TestCase] # Detailed test cases (including hidden ones ideally, but for now we trust client or send them)
     solution: str
     hints: List[str]
+
+class CodeSuggestionIn(BaseModel):
+    topic: str
+    difficulty: str
+    problem_description: str
+    user_code: str
+
+class CodeSuggestionOut(BaseModel):
+    suggestion_code: str
+    explanation: str
+

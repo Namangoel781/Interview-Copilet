@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
-import { Play, Lightbulb, Terminal } from "lucide-react";
+import { Play, Lightbulb, Terminal, Wand2, X, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProblemPanel, type Problem } from "@/components/simulator/ProblemPanel";
@@ -29,6 +30,33 @@ export default function SimulatorPage() {
     const [topic, setTopic] = useState("Arrays");
     const [difficulty, setDifficulty] = useState("Easy");
     const [isGenerating, setIsGenerating] = useState(false);
+
+    // AI Assist state
+    const [aiLoading, setAiLoading] = useState(false);
+    const [aiSuggestion, setAiSuggestion] = useState<{ suggestion_code: string; explanation: string } | null>(null);
+
+    const handleAIAssist = async () => {
+        if (!problem) return;
+        setAiLoading(true);
+        setAiSuggestion(null);
+        try {
+            const res = await axios.post("http://127.0.0.1:8000/simulator/suggest-code", {
+                topic: problem.title || topic, // fallback/refinement
+                difficulty: problem.difficulty,
+                problem_description: problem.description,
+                user_code: code
+            });
+            setAiSuggestion(res.data);
+        } catch (e: any) {
+            toast.error("Failed to get AI suggestion: " + e.message);
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
+    // Auto-update output parser to detect "Solved" state if we want to add that later (as per original plan)
+    // For now focusing on "while coding" assistance.
+
 
     const generateProblem = async () => {
         setIsGenerating(true);
@@ -230,6 +258,20 @@ if __name__ == "__main__":
                                             </span>
                                         </div>
                                         <div className="flex gap-2">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="h-8 gap-2 border-purple-200 hover:bg-purple-50 hover:text-purple-600 dark:border-purple-800 dark:hover:bg-purple-900/30 dark:text-purple-400"
+                                                onClick={handleAIAssist}
+                                                disabled={aiLoading}
+                                            >
+                                                {aiLoading ? (
+                                                    <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                                ) : (
+                                                    <Wand2 className="h-3.5 w-3.5" />
+                                                )}
+                                                AI Assist
+                                            </Button>
                                             <Button variant="ghost" size="sm" className="h-8 gap-2 text-muted-foreground hover:text-foreground">
                                                 <Lightbulb className="h-3.5 w-3.5" />
                                                 Hint
@@ -250,6 +292,47 @@ if __name__ == "__main__":
                                             code={code}
                                             onChange={(val) => setCode(val || "")}
                                         />
+                                        {/* AI Suggestion Overlay */}
+                                        {aiSuggestion && (
+                                            <div className="absolute top-4 right-4 z-50 w-96 max-w-[90%] shadow-2xl animate-in fade-in slide-in-from-top-4 duration-200">
+                                                <Card className="border-purple-200 dark:border-purple-900 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+                                                    <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0 pb-2 bg-purple-50/50 dark:bg-purple-900/20">
+                                                        <div className="flex items-center gap-2">
+                                                            <Wand2 className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                                                            <CardTitle className="text-sm font-medium text-purple-900 dark:text-purple-100">AI Suggestion</CardTitle>
+                                                        </div>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-6 w-6 -mr-1 text-muted-foreground hover:text-foreground"
+                                                            onClick={() => setAiSuggestion(null)}
+                                                        >
+                                                            <X className="h-4 w-4" />
+                                                        </Button>
+                                                    </CardHeader>
+                                                    <CardContent className="p-4 space-y-3">
+                                                        <p className="text-xs text-muted-foreground">{aiSuggestion.explanation}</p>
+                                                        <div className="bg-muted p-2 rounded-md overflow-x-auto">
+                                                            <pre className="text-xs font-mono">{aiSuggestion.suggestion_code}</pre>
+                                                        </div>
+                                                        <div className="flex justify-end gap-2 pt-1">
+                                                            <Button
+                                                                size="sm"
+                                                                variant="default"
+                                                                className="h-7 text-xs bg-purple-600 hover:bg-purple-700 text-white"
+                                                                onClick={() => {
+                                                                    setCode(code + "\n" + aiSuggestion.suggestion_code); // Append or replace? Append is safer for "assist".
+                                                                    setAiSuggestion(null);
+                                                                }}
+                                                            >
+                                                                <Check className="h-3 w-3 mr-1" />
+                                                                Apply
+                                                            </Button>
+                                                        </div>
+                                                    </CardContent>
+                                                </Card>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </ResizablePanel>

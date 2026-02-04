@@ -52,3 +52,24 @@ def chat_complete(system: str, user: str) -> str:
         raise AIError(f"AI request failed: {e}") from e
     except (KeyError, IndexError, ValueError) as e:
         raise AIError(f"AI response parse failed: {e}") from e
+
+def generate_code_suggestion(
+    topic: str,
+    difficulty: str,
+    problem_description: str,
+    user_code: str,
+) -> str:
+    """
+    Generate a code suggestion based on the problem and user's current code.
+    Returns a JSON string containing 'suggestion_code' and 'explanation'.
+    """
+    # Import here to avoid circular dependencies if any, or just for cleanliness
+    from prompts import code_assistance_prompt
+
+    skill = "Coding" # Default skill for simulator
+    prompt = code_assistance_prompt(skill, topic, difficulty, problem_description, user_code)
+
+    return chat_complete(
+        system="You are a helpful coding assistant that outputs JSON.",
+        user=prompt
+    )

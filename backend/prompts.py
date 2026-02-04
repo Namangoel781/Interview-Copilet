@@ -315,3 +315,41 @@ Rules:
 - difficulty_adjustment: +1 if answer was strong, -1 if weak, 0 if okay
 - Return ONLY valid JSON
 """.strip()
+
+
+def code_assistance_prompt(
+    skill: str,
+    topic: str,
+    difficulty: str,
+    problem_description: str,
+    user_code: str,
+) -> str:
+    """Generate a prompt for code assistance/completion."""
+    return f"""
+You are an expert pair programmer helping a candidate solve a coding interview problem.
+
+Context:
+- Skill: {skill}
+- Topic: {topic}
+- Difficulty: {difficulty}
+
+Problem Description:
+{problem_description}
+
+User's Current Code:
+{user_code}
+
+Your Task:
+Provide a helpful code suggestion to move the user forward.
+1. If the code is empty, suggest a starting template or structure.
+2. If the code is partial, suggest the next logical block or complete the current function.
+3. If the code has errors, suggest a fix.
+4. Do NOT solve the entire problem unless the user is very close or it's a small utility. Focus on unblocking.
+
+Output Format:
+Return ONLY valid JSON with this structure:
+{{
+    "suggestion_code": "...",  // The actual python code snippet to insert or replace
+    "explanation": "..."       // Brief explanation of what this code does or why it helps
+}}
+""".strip()
